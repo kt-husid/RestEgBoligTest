@@ -192,6 +192,38 @@ namespace RestEgBoligHeldinTest.Controllers
         }
 
         [HttpGet]
+        [Route("GetAllDepartments")]
+        public List<WaitListObject> GetAllDepartments()
+        {
+            RestEgBoligTest.EgBoligService.Service10540Client svc = new RestEgBoligTest.EgBoligService.Service10540Client();
+
+            List<WaitListObject> listOfDepartments = new List<WaitListObject>();
+            for(short i = 1; i<1000; i++)
+            {
+                RestEgBoligTest.EgBoligService.Department departmentFromService = svc.DepartmentGet(1,i);
+                WaitListObject wishListObject = new WaitListObject();
+
+                if(departmentFromService != null)
+                {
+
+                    wishListObject.CompanyNo = departmentFromService.CompanyNo;
+                    wishListObject.DepartmentNo = departmentFromService.DepartmentNo;
+                    // wishListObject.Type = 
+                    wishListObject.Address = departmentFromService.Address;
+                    wishListObject.PostalCodeCity = departmentFromService.ZipCity;
+                    // wishListObject.Rooms =
+                    // wishListObject.Areal = 
+                    // wishListObject.Price = 
+                    // wishListObject.Amount = 
+
+                    listOfDepartments.Add(wishListObject);
+                }
+            }
+            
+            return listOfDepartments;
+        }
+
+        [HttpGet]
         [Route("getWaitList")]
         public List<WaitListObject> GetWaitList(string cprNo)
         {
