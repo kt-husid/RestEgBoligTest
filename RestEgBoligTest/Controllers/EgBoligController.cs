@@ -289,7 +289,7 @@ namespace RestEgBoligHeldinTest.Controllers
                 waitListObject.Rooms = value.Rooms;
                 waitListObject.Areal = decimal.Round(arealAverage);
                 waitListObject.Price = decimal.Round(priceAverage);
-                waitListObject.Amount = "";
+                waitListObject.Amount = arealList.Count;
                 waitListObject.NumberOnList = value.PriorityNoActive;
                 waitList.Add(waitListObject);
             }

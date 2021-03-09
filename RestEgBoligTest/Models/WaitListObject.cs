@@ -33,7 +33,7 @@ namespace RestEgBoligHeldinTest.Models
         public decimal Price { get; set; }
 
         [DataMember(Name = "amount")]
-        public string Amount { get; set; }
+        public int Amount { get; set; }
 
         [DataMember(Name = "numberOnList")]
         public short? NumberOnList { get; set; }
