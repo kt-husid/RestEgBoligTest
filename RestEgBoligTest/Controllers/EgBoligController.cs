@@ -195,38 +195,42 @@ namespace RestEgBoligHeldinTest.Controllers
         [Route("GetAllDepartments")]
         public List<WaitListObject> GetAllDepartments()
         {
+            // Get all departments that have the tenancyType 1, 4 or 7
+
             RestEgBoligTest.EgBoligService.Service10540Client svc = new RestEgBoligTest.EgBoligService.Service10540Client();
 
             List<WaitListObject> listOfDepartments = new List<WaitListObject>();
-            for(short i = 1; i<1000; i++)
+
+            // there are not more than 100 departments
+            for(short i = 1; i<100; i++)
             {
                 RestEgBoligTest.EgBoligService.Department departmentFromService = svc.DepartmentGet(1,i);
                 
+                // if Department(companyNo, departmentNo) contains a department
                 if(departmentFromService != null)
                 {
-                    foreach(var j in departmentFromService.TenancyQuantities)
+                    // go thorugh every TenancyQuantity in departmentFromService
+                    foreach(var tenancyQuantity in departmentFromService.TenancyQuantities)
                     {
-                        if(j.TenancyType == 1 || j.TenancyType == 4 || j.TenancyType == 7)
+                        // vanligan-, lestrar- og eldrabústað
+                        if(tenancyQuantity.TenancyType == 1 || tenancyQuantity.TenancyType == 4 || tenancyQuantity.TenancyType == 7)
                         {
                             WaitListObject wishListObject = new WaitListObject();
-
+                            
+                            // Areal og rísur verður definerað seinni, tí tað samsvarar ikki við tað sum er í GetWishList (øll feltini eru ikki definerað)
                             wishListObject.CompanyNo = departmentFromService.CompanyNo;
                             wishListObject.DepartmentNo = departmentFromService.DepartmentNo;
-                            wishListObject.Type = j.TenancyType;
+                            wishListObject.Type = tenancyQuantity.TenancyType;
                             wishListObject.Address = departmentFromService.Address;
                             wishListObject.PostalCodeCity = departmentFromService.ZipCity;
-                            wishListObject.Rooms = j.Rooms;
-                            // wishListObject.Areal = 
-                            // wishListObject.Price = 
-                            wishListObject.Amount = j.Count;
+                            wishListObject.Rooms = tenancyQuantity.Rooms;
+                            wishListObject.Amount = tenancyQuantity.Count;
                         
                             listOfDepartments.Add(wishListObject);
-
                         }
                     }
                 }
             }
-            
             return listOfDepartments;
         }
 
