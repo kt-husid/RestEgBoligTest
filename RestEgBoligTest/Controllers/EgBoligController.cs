@@ -201,22 +201,29 @@ namespace RestEgBoligHeldinTest.Controllers
             for(short i = 1; i<1000; i++)
             {
                 RestEgBoligTest.EgBoligService.Department departmentFromService = svc.DepartmentGet(1,i);
-                WaitListObject wishListObject = new WaitListObject();
-
+                
                 if(departmentFromService != null)
                 {
+                    foreach(var j in departmentFromService.TenancyQuantities)
+                    {
+                        if(j.TenancyType == 1 || j.TenancyType == 4 || j.TenancyType == 7)
+                        {
+                            WaitListObject wishListObject = new WaitListObject();
 
-                    wishListObject.CompanyNo = departmentFromService.CompanyNo;
-                    wishListObject.DepartmentNo = departmentFromService.DepartmentNo;
-                    // wishListObject.Type = 
-                    wishListObject.Address = departmentFromService.Address;
-                    wishListObject.PostalCodeCity = departmentFromService.ZipCity;
-                    // wishListObject.Rooms =
-                    // wishListObject.Areal = 
-                    // wishListObject.Price = 
-                    // wishListObject.Amount = 
+                            wishListObject.CompanyNo = departmentFromService.CompanyNo;
+                            wishListObject.DepartmentNo = departmentFromService.DepartmentNo;
+                            wishListObject.Type = j.TenancyType;
+                            wishListObject.Address = departmentFromService.Address;
+                            wishListObject.PostalCodeCity = departmentFromService.ZipCity;
+                            wishListObject.Rooms = j.Rooms;
+                            // wishListObject.Areal = 
+                            // wishListObject.Price = 
+                            wishListObject.Amount = j.Count;
+                        
+                            listOfDepartments.Add(wishListObject);
 
-                    listOfDepartments.Add(wishListObject);
+                        }
+                    }
                 }
             }
             
