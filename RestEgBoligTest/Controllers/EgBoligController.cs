@@ -138,7 +138,7 @@ namespace RestEgBoligHeldinTest.Controllers
 
         [HttpPut]
         [Route("updateMember")]
-        public string UpdateMember(string cprNo, string country, string postalCodeCity, string address, string email, string homePhone, string mobilePhone, short children, string comment)
+        public string UpdateMember(string cprNo, string country, string postalCodeCity, string address, string email, string homePhone, string mobilePhone, short children, [FromBody] string comment)
         {
 
             /**************** FROM WEB SERVICE ****************/
