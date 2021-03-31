@@ -217,7 +217,7 @@ namespace RestEgBoligHeldinTest.Controllers
                         {
                             WaitListObject wishListObject = new WaitListObject();
                             
-                            // Areal og rísur verður definerað seinni, tí tað samsvarar ikki við tað sum er í GetWishList (øll feltini eru ikki definerað)
+                            // Areal og prísur verður definerað seinni, tí tað samsvarar ikki við tað sum er í GetWishList (øll feltini eru ikki definerað)
                             wishListObject.CompanyNo = departmentFromService.CompanyNo;
                             wishListObject.DepartmentNo = departmentFromService.DepartmentNo;
                             wishListObject.Type = tenancyQuantity.TenancyType;
