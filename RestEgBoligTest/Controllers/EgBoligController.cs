@@ -195,6 +195,77 @@ namespace RestEgBoligHeldinTest.Controllers
         [Route("GetAllDepartments")]
         public List<WaitListObject> GetAllDepartments()
         {
+            // connectionstring
+            SqlConnection connection = new SqlConnection(@"Data Source=HAXDMA49; Initial Catalog=Bolig2; Integrated Security=False; User ID=EGBoligWS; Password=zYnc6hvWeytL9AVe; Multipleactiveresultsets=True; App=EntityFramework");
+            connection.Open();
+
+            // SQL for Kontrakt table in Bolig2 database - Update comment
+            string sqlGetDepartment = "SELECT count(*) as amount, afd.[Sel] as company, afd.[Afd] as department, afd.navn as name, afd.Adresse as address, afd.postby as postalCodeCity, lm.Lmtype as type, Antrum FROM[Bolig2].[dbo].[Lejemaal] as lm inner join[Bolig2].[dbo].[Afdeling] as afd on lm.Afd = afd.afd and afd.sel = lm.sel where lmtype in (1, 4, 7) and afd.sel = 1 group by afd.[Sel], afd.[Afd], afd.navn, afd.Adresse, afd.postby, Antrum, lm.Lmtype order by afd.afd";
+            SqlCommand cmdGetComment = new SqlCommand(sqlGetDepartment, connection);
+
+            short company = 0;
+            int amount = 0;
+            short department = 0;
+            string name = "";
+            string address = "";
+            string postalCodeCity = "";
+            short type = 0;
+            short rooms = 0;
+            
+            List<WaitListObject> listOfDepartments = new List<WaitListObject>();
+
+            // get dat from MedlemAfSelskab table
+            using (SqlDataReader dr = cmdGetComment.ExecuteReader())
+            {
+                while (dr.Read())
+                {
+                    company = Convert.ToInt16(dr["company"]);
+                    amount = Convert.ToInt32(dr["amount"]);
+                    department = Convert.ToInt16(dr["department"]);
+                    name = dr["name"].ToString();
+                    address = dr["address"].ToString();
+                    postalCodeCity = dr["postalCodeCity"].ToString();
+                    type = Convert.ToInt16(dr["type"]);
+                    rooms = Convert.ToInt16(dr["Antrum"]);
+                    
+                    WaitListObject wishListObject = new WaitListObject();
+
+                    // Areal og prísur verður definerað seinni, tí tað samsvarar ikki við tað sum er í GetWishList (øll feltini eru ikki definerað)
+                    wishListObject.CompanyNo = company;
+                    wishListObject.DepartmentNo = department;
+                    wishListObject.Type = type;
+                    wishListObject.Name = name;
+                    wishListObject.Address = address;
+                    wishListObject.PostalCodeCity = postalCodeCity;
+                    wishListObject.Rooms = rooms;
+                    wishListObject.Amount = amount;
+                    
+                    listOfDepartments.Add(wishListObject);
+                }
+            }
+            connection.Close();
+
+            return listOfDepartments;
+
+            /*
+            SELECT count(*) as Antal
+                , afd.[Afd]
+	            , afd.navn
+	            , afd.Adresse
+	            , afd.postby
+	            , lm.Lmtype
+	            , Antrum
+            FROM [Bolig2].[dbo].[Lejemaal] as lm inner join [Bolig2].[dbo].[Afdeling] as afd on lm.Afd = afd.afd and afd.sel = lm.sel
+            where lmtype in (1,4,7) and afd.sel=1
+            group by afd.[Afd]
+	            , afd.navn  
+  	            ,afd.Adresse
+	            ,afd.postby
+	            ,Antrum
+	            , lm.Lmtype
+            order by afd.afd
+ 
+
             // Get all departments that have the tenancyType 1, 4 or 7
 
             RestEgBoligTest.EgBoligService.Service10540Client svc = new RestEgBoligTest.EgBoligService.Service10540Client();
@@ -232,6 +303,7 @@ namespace RestEgBoligHeldinTest.Controllers
                 }
             }
             return listOfDepartments;
+            */
         }
 
         [HttpGet]
@@ -258,17 +330,19 @@ namespace RestEgBoligHeldinTest.Controllers
                 SqlConnection connection = new SqlConnection(@"Data Source=HAXDMA49; Initial Catalog=Bolig2; Integrated Security=False; User ID=EGBoligWS; Password=zYnc6hvWeytL9AVe; Multipleactiveresultsets=True; App=EntityFramework");
                 connection.Open();
 
-                string sqlGetFromAfdeling = "select Top(1) navn, postby from [Bolig2].[dbo].[Afdeling] where sel = " + value.CompanyNo + " and afd = " + value.DepartmentNo;
+                string sqlGetFromAfdeling = "select Top(1) navn, adresse, postby from [Bolig2].[dbo].[Afdeling] where sel = " + value.CompanyNo + " and afd = " + value.DepartmentNo;
                 SqlCommand cmd = new SqlCommand(sqlGetFromAfdeling, connection);
 
+                string navn = "";
                 string address = "";
                 string postalCodeCity = "";
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
                     if (dr.Read())
                     {
+                        navn = dr["navn"].ToString();
+                        address = dr["adresse"].ToString();
                         postalCodeCity = dr["postby"].ToString();
-                        address = dr["navn"].ToString();
                     }
                 }
 
@@ -327,6 +401,7 @@ namespace RestEgBoligHeldinTest.Controllers
                 waitListObject.CompanyNo = value.CompanyNo;
                 waitListObject.DepartmentNo = value.DepartmentNo;
                 waitListObject.Type = value.TenancyType;
+                waitListObject.Name = navn;
                 waitListObject.Address = address;
                 waitListObject.PostalCodeCity = postalCodeCity;
                 waitListObject.Rooms = value.Rooms;

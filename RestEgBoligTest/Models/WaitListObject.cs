@@ -17,6 +17,9 @@ namespace RestEgBoligHeldinTest.Models
         [DataMember(Name = "type")]
         public short Type { get; set; }
 
+        [DataMember(Name = "name")]
+        public string Name { get; set; }
+
         [DataMember(Name = "address")]
         public string Address { get; set; }
 
